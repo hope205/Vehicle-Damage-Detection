@@ -1,7 +1,6 @@
-
 raw_data_dir: data/raw
 train_annotation_file: 0Train_via_annos.json
-val_annotation_file: 0Val_via_annos.json
+
 
 # Directory containing the original images
 image_dir: image

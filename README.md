@@ -10,6 +10,8 @@
 
 ## 5. Dataset
 
+https://www.kaggle.com/datasets/gabrielfcarvalho/cardd-with-yolo-annotations-images-labels
+
 ### Dataset Source
 ### Dataset Statistics
 ### Class Distribution
@@ -22,6 +24,8 @@
 ## 8. Model Selection
 
 ### Baseline
+
+
 ### Candidate Models
 ### Final Model
 

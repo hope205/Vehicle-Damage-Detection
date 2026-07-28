@@ -1,6 +1,4 @@
 # YOLO segmentation model checkpoint
-model_name: yolo11n-seg.pt
-task: segment
 
 num_classes: 2
 
@@ -8,10 +6,12 @@ class_names:
   - dent
   - scratch
 
+model_path: src/app/model/best.pt
 
-# ============================================================
-# Inference Configuration
-# ============================================================
+
+
+
+
 
 # Confidence threshold
 confidence_threshold: 0.25
@@ -21,3 +21,9 @@ iou_threshold: 0.50
 
 # Image size used during inference
 image_size: 640
+
+allowed_content_types:
+  - image/jpeg
+  - image/png
+  - image/jpg
+  - image/webp
