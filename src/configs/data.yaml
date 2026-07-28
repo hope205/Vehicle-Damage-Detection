@@ -1,0 +1,21 @@
+
+raw_data_dir: data/raw
+train_annotation_file: 0Train_via_annos.json
+val_annotation_file: 0Val_via_annos.json
+
+# Directory containing the original images
+image_dir: image
+
+filtered_data_dir: data/filtered
+
+report_dir: data/reports
+
+processed_data_dir: data/processed
+
+class_mapping:
+  mop_lom: dent
+  tray_son: scratch
+
+classes:
+  0: dent
+  1: scratch

@@ -1,0 +1,23 @@
+# YOLO segmentation model checkpoint
+model_name: yolo11n-seg.pt
+task: segment
+
+num_classes: 2
+
+class_names:
+  - dent
+  - scratch
+
+
+# ============================================================
+# Inference Configuration
+# ============================================================
+
+# Confidence threshold
+confidence_threshold: 0.25
+
+# IoU threshold used during NMS
+iou_threshold: 0.50
+
+# Image size used during inference
+image_size: 640
