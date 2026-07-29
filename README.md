@@ -248,35 +248,12 @@ You can then interact with the vehicle damage detection API directly from the Sw
 
 ### Model Selection
 
-The model selection process focused on evaluating lightweight YOLO-based object detection models that could provide a good balance between detection accuracy and inference efficiency.
-
-Two model configurations were evaluated during the initial experimentation phase:
-
-| Model | Image Size | Batch Size | Epochs | mAP@0.5 |
-|---|---:|---:|---:|---:|
-| YOLO26n | 1024 × 1024 | 16 | 50 | 0.5504 |
-| YOLOv8n | 640 × 640 | 16 | 50 | **0.5800** |
-
-
-
-The **YOLO26n** model was initially used as the baseline and achieved a **mAP@0.5 of 0.5504** using an image size of **1024 × 1024**, a batch size of **16**, and **50 training epochs**.
-
-The **YOLOv8n** model achieved a higher overall **mAP@0.5 of 0.5800** while using a smaller input image size of **640 × 640**, with the same batch size of **16** and **50 training epochs**.
-
-Based on these results, **YOLOv8n was selected as the final model** for the vehicle damage detection system. It provided better detection performance than the YOLO26n baseline while using a smaller input resolution, making it a suitable choice for the production inference API.
-
-The final model was trained to detect two classes:
-
-- `dent`
-- `scratch`
-
-The trained model was subsequently integrated into the FastAPI inference service.
 
 ---
 
 ### Training Methodology
 
-The model training process was performed using the filtered CarDD dataset containing annotations for two vehicle damage categories: **dent** and **scratch**.
+The model training process was performed using the filtered CarDD dataset containing annotations for three vehicle damage categories: **dent**, **scratch** and **clean**
 
 The training pipeline consisted of the following steps:
 
@@ -311,20 +288,87 @@ The training pipeline consisted of the following steps:
 The API accepts common image formats including JPEG, PNG, JPG, and WebP.
 
 
+### Model Evaluation
 
-### Evaluation & Metrics
+The trained YOLO object detection model was evaluated on a held-out validation dataset using standard object detection metrics. The evaluation measures how accurately the model detects and localizes different categories of vehicle damage.
 
-The primary goal of this initial training phase was to determine if the model could successfully identy scratchs and dents features of vehicle damage. The results strongly indicate that it has. 
+### Overall Performance
 
-Our model achieved an overall **mAP@0.5 of 0.580**, with closely balanced performance across our target classes:
-* **Dent AP:** 0.585
-* **Scratch AP:** 0.575
+| Metric | Score |
+|--------|------:|
+| Precision | **79.87%** |
+| Recall | **67.68%** |
+| F1-Score | **73.27%** |
+| mAP@0.5 | **74.29%** |
+| mAP@0.5:0.95 | **56.63%** |
 
-To optimize the model's performance in a real-world setting, I analyzed the F1-Confidence curve to find the perfect balance between Precision and Recall. The curve peaks at an F1 score of 0.58 when using a confidence threshold of **0.405**. By configuring the model to ignore predictions below this 40.5% confidence mark, we can filter out a significant portion of low-confidence noise.
+### Per-Class Performance
 
-![BoxPR_curve](runs/detect/evaluations/vehicle_damage_evaluation/BoxPR_curve.png)
+| Class | Precision | Recall | F1-Score | mAP@0.5 | mAP@0.5:0.95 |
+|------|----------:|-------:|---------:|---------:|-------------:|
+| Dent | 76.74% | 58.90% | 66.65% | 63.73% | 37.04% |
+| Scratch | 69.44% | 54.72% | 61.21% | 61.48% | 35.48% |
+| Clean | 93.44% | 89.42% | 91.39% | 97.67% | 97.35% |
 
-![BoxF1_curve](runs/detect/evaluations/vehicle_damage_evaluation/BoxF1_curve.png)
+## Metric Interpretation
+
+### Precision (79.87%)
+
+Precision measures the proportion of predicted damage detections that are actually correct. A precision of **79.87%** indicates that when the model predicts a damage region, it is correct nearly **4 out of every 5 times**, resulting in relatively few false positive detections.
+
+### Recall (67.68%)
+
+Recall measures the model's ability to detect all actual damage instances. A recall of **67.68%** means the model successfully identifies approximately **two-thirds of all damages**, while some damage regions remain undetected.
+
+### F1-Score (73.27%)
+
+The F1-score is the harmonic mean of precision and recall, providing a balanced measure of detection performance. The model achieves an overall **F1-score of 73.27%**, indicating a good balance between minimizing false positives and detecting true damage instances.
+
+### mAP@0.5 (74.29%)
+
+Mean Average Precision at an IoU threshold of 0.5 evaluates both classification and localization performance. A score of **74.29%** indicates that the model performs well at identifying and localizing vehicle damage when a moderate overlap between predicted and ground-truth bounding boxes is required.
+
+### mAP@0.5:0.95 (56.63%)
+
+This metric averages performance across multiple IoU thresholds (0.50 to 0.95), making it a much stricter evaluation of localization accuracy. The score of **56.63%** shows that while the model detects damage effectively, there is still room for improvement in predicting highly accurate bounding box locations.
+
+
+## Class-wise Analysis
+
+### Clean
+
+The **Clean** class achieved the strongest performance across all metrics:
+
+- Precision: **93.44%**
+- Recall: **89.42%**
+- F1-Score: **91.39%**
+- mAP@0.5: **97.67%**
+
+These results indicate that the model can reliably distinguish undamaged vehicles from damaged ones with very high confidence and localization accuracy.
+
+### Dent
+
+The **Dent** class achieved moderate performance:
+
+- Precision: **76.74%**
+- Recall: **58.90%**
+- F1-Score: **66.65%**
+
+The model is generally accurate when predicting dents but misses a noticeable number of dent instances. This may be due to varying dent sizes, lighting conditions, or subtle surface deformations that are difficult to detect.
+
+### Scratch
+
+The **Scratch** class proved to be the most challenging:
+
+- Precision: **69.44%**
+- Recall: **54.72%**
+- F1-Score: **61.21%**
+
+Scratches are often thin, small, and visually similar to reflections or shadows, making them harder to localize accurately. This is reflected in the comparatively lower recall and localization metrics.
+
+## Summary
+
+Overall, the model demonstrates **strong object detection performance**, achieving a **74.29% mAP@0.5** while maintaining high precision. It performs exceptionally well on the **Clean** class and shows reasonable performance on **Dent** and **Scratch** detection.
 
 
 
@@ -344,10 +388,17 @@ While the model performs well at finding damage,it is highly sensitive and is cu
 ![confusion_matrix](runs/detect/evaluations/vehicle_damage_evaluation/confusion_matrix.png)
 
 **Action Plan :**
-To easily correct this hyper-sensitivity, the next training iteration will include:
-1. Injecting a large volume of "background-only" images (perfectly intact vehicles under various lighting conditions) with empty annotations to force the model to learn what not to detect.
-2. Isolating the specific reflections and panel gaps that caused the false positives, labeling them as background, and feeding them back into the model. Instead of two classes, we will be having three classes
-3. Applying more random glare and shadow effects during training to make the model blind to lighting artifacts. 
+
+The comparatively lower recall and mAP@0.5:0.95 for damage classes suggest that future improvements could focus on:
+
+- Increasing the diversity and quantity of dent and scratch images.
+- Applying stronger data augmentation techniques.
+- Training for additional epochs with hyperparameter tuning.
+- Experimenting with larger YOLO model variants.
+- Improving annotation quality for small or ambiguous damage regions.
+
+These improvements are expected to enhance localization accuracy and increase detection performance for subtle vehicle damage.
+
 
 ### Business Impact & Deployment Strategy
 
