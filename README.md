@@ -332,7 +332,7 @@ To optimize the model's performance in a real-world setting, I analyzed the F1-C
 
 
 
-### Error Analysis: What the Data is Telling Us
+### Error Analysis
 
 A deep dive into the confusion matrices reveals a very clear story about what the model has learned, and exactly where it needs refinement. 
 
@@ -344,8 +344,6 @@ The model is highly capable of identifying actual damage. When presented with a 
 
 **Area for Improvement: Hyper-Sensitivity (False Positives)**
 While the model performs well at finding damage,it is highly sensitive and is currently confusing environmental artifacts like sharp reflections, glare, dirt, and natural vehicle panel gaps for scratches and dents. Looking at the raw matrix counts, the model frequently hallucinates bounding boxes on the background (clean parts of the car). 
-
-In short: The model knows exactly what a scratch looks like, but it hasn't yet learned what a *healthy* car looks like. 
 
 ![confusion_matrix](runs/detect/evaluations/vehicle_damage_evaluation/confusion_matrix.png)
 
