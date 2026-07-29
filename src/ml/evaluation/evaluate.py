@@ -6,7 +6,7 @@ from ml.evaluation.metrics import extract_all_metrics
 # ============================================================
 # Configuration
 # ============================================================
-MODEL_PATH = Path("runs/dent_scratch_detector/weight/best.pt")
+MODEL_PATH = Path("src/app/model/best_yolo26.pt")
 DATA_PATH = Path("data_carrd/filtered/data.yaml")
 CLASS_NAMES = settings.data.classes
 

@@ -5,65 +5,6 @@
 
 The proposed solution is an end-to-end computer vision system for detecting two common types of vehicle damage: **scratches and dents**.
 
-The solution follows the following workflow:
-
-1. **Dataset Collection**
-   - The CarDD dataset with YOLO annotations was used as the source dataset.
-
-2. **Dataset Exploration and Preprocessing**
-   - The original dataset contains multiple vehicle damage categories.
-   - The dataset was filtered to retain only the **dent** and **scratch** classes relevant to this task.
-   - Images and their corresponding YOLO-format annotations were extracted and organised into training, validation, and test splits.
-
-3. **Model Training**
-   - A YOLO-based object detection model was trained on the filtered dataset.
-   - The model learns to identify the location and category of visible vehicle damage.
-
-4. **Model Evaluation**
-   - The trained model was evaluated using object detection metrics such as:
-     - Precision
-     - Recall
-     - F1-score
-     - mAP@50
-     - mAP@50-95
-   - Error analysis was performed to identify common failure cases and areas for improvement.
-
-5. **Inference API**
-   - The trained model was integrated into a **FastAPI** application.
-   - The API accepts vehicle images and runs inference using the trained YOLO model.
-   - Predictions are returned as structured responses containing detected damage classes, confidence scores, and bounding-box coordinates.
-
-6. **Containerisation**
-   - The application is packaged using Docker to provide a consistent and reproducible deployment environment.
-
-### High-Level Workflow
-
-```text
-Vehicle Image
-      │
-      ▼
-FastAPI Inference API
-      │
-      ▼
-Image Preprocessing
-      │
-      ▼
-YOLO Object Detection Model
-      │
-      ├───────────────┐
-      ▼               ▼
-   Dent           Scratch
-      │               │
-      └───────┬───────┘
-              ▼
-     Detection Results
-              │
-              ▼
-     JSON API Response
-```
-
-
-
 ### Dataset Source
 
 The dataset used for this project is the **CarDD with YOLO Annotations (Images + Labels)** dataset, available on Kaggle:
@@ -220,16 +161,67 @@ You can then interact with the vehicle damage detection API directly from the Sw
 
 
 
-## 7. Preprocessing
+### Model Selection
 
-## 8. Model Selection
+The model selection process focused on evaluating lightweight YOLO-based object detection models that could provide a good balance between detection accuracy and inference efficiency.
 
-### Baseline
+Two model configurations were evaluated during the initial experimentation phase:
+
+| Model | Image Size | Batch Size | Epochs | mAP@0.5 |
+|---|---:|---:|---:|---:|
+| YOLO26n | 1024 × 1024 | 16 | 50 | 0.5504 |
+| YOLOv8n | 640 × 640 | 16 | 50 | **0.5800** |
+
+The **YOLO26n** model was initially used as the baseline and achieved a **mAP@0.5 of 0.5504** using an image size of **1024 × 1024**, a batch size of **16**, and **50 training epochs**.
+
+The **YOLOv8n** model achieved a higher overall **mAP@0.5 of 0.5800** while using a smaller input image size of **640 × 640**, with the same batch size of **16** and **50 training epochs**.
+
+Based on these results, **YOLOv8n was selected as the final model** for the vehicle damage detection system. It provided better detection performance than the YOLO26n baseline while using a smaller input resolution, making it a suitable choice for the production inference API.
+
+The final model was trained to detect two classes:
+
+- `dent`
+- `scratch`
+
+The trained model was subsequently integrated into the FastAPI inference service.
+
+---
+
+### Training Methodology
+
+The model training process was performed using the filtered CarDD dataset containing annotations for two vehicle damage categories: **dent** and **scratch**.
+
+The training pipeline consisted of the following steps:
+
+1. **Dataset Preparation**
+   - The original CarDD dataset was filtered to retain only `dent` and `scratch` annotations.
+   - Images without either of the target damage classes were excluded.
+   - The resulting dataset was organised into `train`, `val`, and `test` splits.
+   - A YOLO-compatible `data.yaml` configuration file was generated to define the dataset paths and class names.
+
+2. **Baseline Training**
+   - YOLO26n was selected as the initial baseline model.
+   - The baseline model was trained for **50 epochs**.
+   - A batch size of **16** was used.
+   - The input image size was set to **1024 × 1024 pixels**.
+   - The baseline achieved a **mAP@0.5 of 0.5504**.
+
+3. **Final Model Training**
+   - YOLOv8n was subsequently evaluated as an alternative lightweight object detection model.
+   - The model was trained for **50 epochs** with a batch size of **16**.
+   - The input image size was set to **640 × 640 pixels**.
+   - The YOLOv8n model achieved an overall **mAP@0.5 of 0.5800**.
+
+4. **Hardware**
+   - Model training was performed on Kaggle using **2 × NVIDIA Tesla T4 GPUs**.
+
+5. **Model Selection**
+   - The trained models were evaluated based on their object detection performance.
+   - YOLOv8n achieved the highest mAP@0.58 of the evaluated configurations and was therefore selected as the final model for deployment.
 
 
-### Candidate Models
-### Final Model
 
+The API accepts common image formats including JPEG, PNG, JPG, and WebP.
 
 
 
@@ -237,7 +229,7 @@ You can then interact with the vehicle damage detection API directly from the Sw
 
 The primary goal of this initial training phase was to determine if the model could successfully identy scratchs and dents features of vehicle damage. The results strongly indicate that it has. 
 
-Our baseline model achieved an overall **mAP@0.5 of 0.580**, with closely balanced performance across our target classes:
+Our model achieved an overall **mAP@0.5 of 0.580**, with closely balanced performance across our target classes:
 * **Dent AP:** 0.585
 * **Scratch AP:** 0.575
 
@@ -256,7 +248,7 @@ The model is highly capable of identifying actual damage. When presented with a 
 `[Insert confusion_matrix_normalized.png here]`
 
 **Area for Improvement: Hyper-Sensitivity (False Positives)**
-While the model is fantastic at finding damage, it is currently "over-eager." Looking at the raw matrix counts, the model frequently hallucinates bounding boxes on the background (clean parts of the car). It is highly sensitive and is currently confusing environmental artifacts—like sharp reflections, glare, dirt, and natural vehicle panel gaps—for scratches and dents. 
+While the model performs well at finding damage,it is highly sensitive and is currently confusing environmental artifacts—like sharp reflections, glare, dirt, and natural vehicle panel gaps—for scratches and dents. Looking at the raw matrix counts, the model frequently hallucinates bounding boxes on the background (clean parts of the car). 
 
 In short: The model knows exactly what a scratch looks like, but it hasn't yet learned what a *healthy* car looks like. 
 
@@ -274,7 +266,3 @@ While the current false-positive rate means this iteration isn't ready for fully
 
 In an automated insurance or rental inspection pipeline, this model can confidently flag potential issues for human review, ensuring no actual damage slips through the cracks. Once the false positive rate is calibrated via the negative sampling strategy outlined above, this system will be fully capable of dramatically reducing manual inspection labor, accelerating claim processing times, and standardizing damage assessments across the board.
 
-
-## 18. Limitations
-
-## 19. Future Improvements
