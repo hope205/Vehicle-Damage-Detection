@@ -235,8 +235,11 @@ Our model achieved an overall **mAP@0.5 of 0.580**, with closely balanced perfor
 
 To optimize the model's performance in a real-world setting, I analyzed the F1-Confidence curve to find the perfect balance between Precision and Recall. The curve peaks at an F1 score of 0.58 when using a confidence threshold of **0.405**. By configuring the model to ignore predictions below this 40.5% confidence mark, we can filter out a significant portion of low-confidence noise.
 
-`[Insert BoxPR_curve.png here]`
-`[Insert BoxF1_curve.png here]`
+![BoxPR_curve](runs/detect/evaluations/vehicle_damage_evaluation/BoxPR_curve.png)
+
+![BoxF1_curve](runs/detect/evaluations/vehicle_damage_evaluation/BoxF1_curve.png)
+
+
 
 ## 🔍 Error Analysis: What the Data is Telling Us
 
@@ -245,14 +248,15 @@ A deep dive into the confusion matrices reveals a very clear story about what th
 **The Good: Excellent Feature Recognition**
 The model is highly capable of identifying actual damage. When presented with a real defect, it correctly flags scratches **83% of the time** and dents **77% of the time**. It is exceptionally rare for the model to completely miss actual damage (only missing 3-4% of the time). This proves that the foundational feature extraction is robust.
 
-`[Insert confusion_matrix_normalized.png here]`
+![confusion_matrix_normalized](runs/detect/evaluations/vehicle_damage_evaluation/confusion_matrix_normalized.png)
+
 
 **Area for Improvement: Hyper-Sensitivity (False Positives)**
 While the model performs well at finding damage,it is highly sensitive and is currently confusing environmental artifacts—like sharp reflections, glare, dirt, and natural vehicle panel gaps—for scratches and dents. Looking at the raw matrix counts, the model frequently hallucinates bounding boxes on the background (clean parts of the car). 
 
 In short: The model knows exactly what a scratch looks like, but it hasn't yet learned what a *healthy* car looks like. 
 
-`[Insert confusion_matrix.png here]`
+![confusion_matrix](runs/detect/evaluations/vehicle_damage_evaluation/confusion_matrix.png)
 
 **Action Plan for Version 2.0:**
 To easily correct this hyper-sensitivity, the next training iteration will include:
