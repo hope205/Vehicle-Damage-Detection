@@ -1,10 +1,10 @@
-model_name: yolov8n-seg.pt
+model_name: yolo26n.pt
 pretrained: true
 
 # Training
-epochs: 20
-batch_size: 8
-patience: 5
+epochs: 50
+batch_size: 16
+patience: 10
 workers: 4
 seed: 42
 
@@ -23,4 +23,4 @@ image_size: 640
 # Output
 output_dir: runs/train
 project_name: vehicle_damage_detection
-run_name: yolov8n_seg_dent_scratch
+run_name: yolo26_dent_scratch

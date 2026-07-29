@@ -6,16 +6,14 @@ import yaml
 from pydantic import BaseModel
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_DIR = PROJECT_ROOT / "src/configs"
 
 
 class DataConfig(BaseModel):
     raw_data_dir: Path
     filtered_data_dir: Path
-    processed_data_dir: Path
     image_dir: str
-    train_annotation_file: str
     classes: dict[int, str]
 
 
@@ -27,8 +25,10 @@ class ModelConfig(BaseModel):
     image_size: int
     model_path: Path 
     allowed_content_types: set[str] = {"image/jpeg", "image/png", "image/jpg", "image/webp"}
+    num_classes: int
+    max_image_size_mb: int = 5  # Maximum allowed image size in MB
 
-    
+
 
 class TrainingConfig(BaseModel):
     output_dir: Path

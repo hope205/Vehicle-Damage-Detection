@@ -1,19 +1,11 @@
-raw_data_dir: data/raw
-train_annotation_file: 0Train_via_annos.json
+raw_data_dir: data_carrd/raw
 
 
-# Directory containing the original images
 image_dir: image
 
-filtered_data_dir: data/filtered
+filtered_data_dir: data_carrd/filtered
 
-report_dir: data/reports
-
-processed_data_dir: data/processed
-
-class_mapping:
-  mop_lom: dent
-  tray_son: scratch
+report_dir: reports_dir
 
 classes:
   0: dent

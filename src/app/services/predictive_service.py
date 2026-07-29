@@ -4,8 +4,8 @@ import time
 from pathlib import Path
 from PIL import Image
 from ultralytics import YOLO
-from core.config import settings
-from src.app.schema import BoundingBox, Detection, PredictionResponse
+from src.core.config import settings
+from src.app.schema.schemas import BoundingBox, Detection, PredictionResponse
 
 
 
@@ -26,7 +26,7 @@ class DamagePredictor:
     def __init__(self, model_path: Path | None = None):
         if getattr(self, "_initialized", False):
             return
-        self.model_path = model_path or settings.model_path
+        self.model_path = model_path or settings.model.model_path
         self.model: YOLO | None = None
         self._initialized = True
 

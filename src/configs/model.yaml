@@ -1,4 +1,5 @@
 # YOLO segmentation model checkpoint
+model_name: yolo26n.pt
 
 num_classes: 2
 
@@ -7,10 +8,6 @@ class_names:
   - scratch
 
 model_path: src/app/model/best.pt
-
-
-
-
 
 
 # Confidence threshold

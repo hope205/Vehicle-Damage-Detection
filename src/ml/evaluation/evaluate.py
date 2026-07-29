@@ -11,10 +11,8 @@ DATA_PATH = Path("data_carrd/filtered/data.yaml")
 CLASS_NAMES = settings.data.classes
 
 # Directory where evaluation results and plots will be saved
-EVALUATION_DIR = Path("evaluations")
+# EVALUATION_DIR = Path("evaluations")
 EVALUATION_NAME = "vehicle_damage_evaluation"
-
-
 
 
 
@@ -48,9 +46,10 @@ def evaluate_model():
         batch=settings.training.batch_size,
         device=settings.training.device,
         plots=True,
-        project=str(EVALUATION_DIR),
+        project=str(EVALUATION_NAME),
         name=EVALUATION_NAME,
         exist_ok=True,
+        
     )
 
     metrics = extract_all_metrics(results, CLASS_NAMES)
@@ -90,10 +89,11 @@ def evaluate_model():
         print(f"  mAP50:         {box['map50']:.4f}")
         print(f"  mAP50-95:      {box['map50_95']:.4f}")
 
-    # ========================================================
+  
     # Evaluation Output
-    # ========================================================
-    evaluation_path = EVALUATION_DIR / EVALUATION_NAME
+   
+
+    evaluation_path = EVALUATION_NAME
 
     print("\n" + "=" * 60)
     print("EVALUATION COMPLETED SUCCESSFULLY")

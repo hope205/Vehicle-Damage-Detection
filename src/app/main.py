@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
 from src.core.config import settings
-from src.app.schema import HealthResponse, PredictionResponse
+from src.app.schema.schemas import HealthResponse, PredictionResponse
 from src.app.services.predictive_service import predictor
 
 logging.basicConfig(level=logging.INFO)
@@ -51,7 +51,7 @@ async def predict(file: UploadFile = File(...)) -> PredictionResponse:
     _validate_upload(file)
     image_bytes = await file.read()
 
-    if len(image_bytes) > settings.max_image_size_mb * 1024 * 1024:
+    if len(image_bytes) > settings.model.max_image_size_mb * 1024 * 1024:
         raise HTTPException(status_code=413, detail="Image exceeds maximum allowed size.")
 
     try:
@@ -79,6 +79,6 @@ async def predict_annotated(file: UploadFile = File(...)) -> Response:
 
 
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
