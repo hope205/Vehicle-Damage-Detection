@@ -24,9 +24,10 @@ During preprocessing, all annotations belonging to other damage categories were 
 
 The resulting filtered dataset contains **6,138 annotated damage instances** across the two target classes.
 
+
 ### Class Distribution
 
-After filtering the dataset to include only dents and scratches, the class distribution was:
+After filtering the dataset to include only **dents** and **scratches**, the class distribution was:
 
 | Class | Instances | Percentage |
 |---|---:|---:|
@@ -36,7 +37,23 @@ After filtering the dataset to include only dents and scratches, the class distr
 
 The filtered dataset contains a higher number of **scratch** annotations than **dent** annotations. Scratches account for **58.57%** of all annotated damage instances, while dents account for **41.43%**.
 
-Overall, the class distribution is reasonably balanced, although scratches are more represented than dents. This filtered dataset was subsequently used to train the YOLO-based vehicle damage detection model.
+Overall, the class distribution is reasonably balanced, although scratches are more represented than dents.
+
+### Number of Filtered Images
+
+After filtering the dataset, a total of **2,974 images** containing at least one dent or scratch annotation were retained across the training, validation, and test sets.
+
+| Dataset Split | Number of Images |
+|---|---:|
+| Train | 2,101 |
+| Validation | 603 |
+| Test | 270 |
+| **Total** | **2,974** |
+
+The filtered dataset was subsequently used to train and evaluate the YOLO-based vehicle damage detection model.
+
+
+
 
 
 ### Setup
