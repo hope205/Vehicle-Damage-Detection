@@ -8,11 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
-.env
 
-runs/
 
 report_dir/
 data/
 data_carrd/
+
 

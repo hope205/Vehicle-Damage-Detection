@@ -1,0 +1,11 @@
+# Same service as GitHub README: FastAPI on port 8000
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: vehicle-damage:latest
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    mem_limit: 4g

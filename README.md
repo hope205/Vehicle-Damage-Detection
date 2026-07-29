@@ -230,10 +230,7 @@ git clone https://github.com/hope205/Vehicle-Damage-Detection
 cd vehicle-damage-detection
 
 # Build the Docker image
-docker build -t vehicle-damage .
-
-# Run the container
-docker run -p 8000:8000 vehicle-damage:latest
+docker compose up --build
 ```
 
 After starting the container, open the FastAPI documentation in your browser:
@@ -295,7 +292,7 @@ Mean Average Precision at an IoU threshold of 0.5 evaluates both classification 
 
 ### mAP@0.5:0.95 (56.63%)
 
-This metric averages performance across multiple IoU thresholds (0.50 to 0.95), making it a much stricter evaluation of localization accuracy. The score of **56.63%** shows that while the model detects damage effectively, there is still room for improvement in predicting highly accurate bounding box locations.
+This metric averages performance across multiple IoU thresholds (0.50 to 0.95), making it a much stricter evaluation of localization accuracy based of the fact that he area of dent or scratch may be wide or small and getting the exact boundary box is difficult because of its relativity
 
 
 ## Class-wise Analysis
@@ -340,7 +337,7 @@ Scratches are often thin, small, and visually similar to reflections or shadows,
 ![Predcition through the API](Images/scratch.png)
 
 
-### Error Analysis
+## Error Analysis
 
 ![Confusion matrix](evaluations/eval_20260729_183654/confusion_matrix.png)
 
