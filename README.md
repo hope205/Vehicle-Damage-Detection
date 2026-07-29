@@ -60,7 +60,7 @@ YOLO Object Detection Model
               │
               ▼
      JSON API Response
-
+```
 
 
 
