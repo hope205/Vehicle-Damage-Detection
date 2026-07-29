@@ -3,14 +3,12 @@ from ultralytics import YOLO
 from core.config import settings
 from ml.evaluation.metrics import extract_all_metrics
 
-# ============================================================
-# Configuration
-# ============================================================
-MODEL_PATH = Path("src/app/model/best_yolo26.pt")
+
+MODEL_PATH = Path("src/app/model/best_yolo8n.pt")
 DATA_PATH = Path("data_carrd/filtered/data.yaml")
 CLASS_NAMES = settings.data.classes
 
-# Directory where evaluation results and plots will be saved
+
 # EVALUATION_DIR = Path("evaluations")
 EVALUATION_NAME = "vehicle_damage_evaluation"
 
@@ -19,16 +17,6 @@ EVALUATION_NAME = "vehicle_damage_evaluation"
 def evaluate_model():
     """
     Evaluate the trained YOLO detection model.
-
-    Generates:
-    - Overall box/detection metrics
-    - Per-class box metrics
-    - Confusion matrix
-    - Normalized confusion matrix
-    - Precision-Recall curve
-    - F1 curve
-    - Precision curve
-    - Recall curve
     """
     print(f"Loading model from: {MODEL_PATH}")
 
@@ -90,7 +78,7 @@ def evaluate_model():
         print(f"  mAP50-95:      {box['map50_95']:.4f}")
 
   
-    # Evaluation Output
+  
    
 
     evaluation_path = EVALUATION_NAME

@@ -48,6 +48,8 @@ async def health_check() -> HealthResponse:
 
 @app.post("/predict", response_model=PredictionResponse, tags=["Inference"])
 async def predict(file: UploadFile = File(...)) -> PredictionResponse:
+    '''
+    Accepts an image file and returns detected damages with bounding boxes and confidence scores.'''
     _validate_upload(file)
     image_bytes = await file.read()
 
@@ -63,10 +65,13 @@ async def predict(file: UploadFile = File(...)) -> PredictionResponse:
 
 @app.post("/predict/annotated", tags=["Inference"])
 async def predict_annotated(file: UploadFile = File(...)) -> Response:
+    '''
+    Returns the uploaded image with bounding boxes drawn around detected damages.
+    '''
     _validate_upload(file)
     image_bytes = await file.read()
 
-    if len(image_bytes) > settings.max_image_size_mb * 1024 * 1024:
+    if len(image_bytes) > settings.model.max_image_size_mb * 1024 * 1024:
         raise HTTPException(status_code=413, detail="Image exceeds maximum allowed size.")
 
     try:

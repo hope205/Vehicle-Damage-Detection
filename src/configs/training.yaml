@@ -1,4 +1,4 @@
-model_name: yolo26n.pt
+model_name: yolo8n.pt
 pretrained: true
 
 # Training

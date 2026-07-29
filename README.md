@@ -52,8 +52,90 @@ After filtering the dataset, a total of **2,974 images** containing at least one
 
 The filtered dataset was subsequently used to train and evaluate the YOLO-based vehicle damage detection model.
 
+## API
 
+The Vehicle Damage Detection System provides a **FastAPI-based REST API** for detecting vehicle **scratches and dents** from uploaded images.
 
+The API provides three main endpoints:
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/health` | `GET` | Checks whether the API is running and whether the detection model is loaded. |
+| `/predict` | `POST` | Accepts a vehicle image and returns detected damage classes, bounding boxes, and confidence scores. |
+| `/predict/annotated` | `POST` | Accepts a vehicle image and returns the image with bounding boxes drawn around detected damage. |
+
+### Health Check
+
+```http
+GET /health
+```
+
+The health endpoint can be used to verify that the API is running and that the YOLO damage detection model has been successfully loaded.
+
+Example response:
+
+```json
+{
+  "status": "ok",
+  "model_loaded": true
+}
+```
+
+### Damage Prediction
+
+```http
+POST /predict
+```
+
+The prediction endpoint accepts an image of a vehicle and uses the trained YOLOv8n model to detect visible **scratches** and **dents**.
+
+The response contains information about the detected damage, including:
+
+- Damage class.
+- Confidence score.
+- Bounding-box coordinates.
+
+This endpoint is useful when another application needs to consume the model's predictions programmatically.
+
+### Annotated Prediction
+
+```http
+POST /predict/annotated
+```
+
+The annotated prediction endpoint performs the same vehicle damage detection process but returns the uploaded image with bounding boxes drawn around the detected scratches and dents.
+
+This endpoint is useful when users want to visually inspect the model's predictions and see exactly where the detected damage is located on the vehicle.
+
+### Supported Image Formats
+
+The API accepts the following image formats:
+
+- JPEG
+- JPG
+- PNG
+- WebP
+
+Uploaded images are validated before inference, and images exceeding the configured maximum file size are rejected.
+
+### Interactive API Documentation
+
+The API includes automatically generated interactive documentation using FastAPI's Swagger UI.
+
+After starting the application, the documentation can be accessed at:
+
+```text
+http://localhost:8000/docs
+```
+
+The Swagger interface allows users to:
+
+1. Select an API endpoint.
+2. Upload a vehicle image.
+3. Run the damage detection model.
+4. View the returned predictions or annotated image.
+
+This provides a simple way to test and interact with the vehicle damage detection model without requiring users to write API client code.
 
 
 ### Setup
@@ -97,19 +179,6 @@ Navigate into the project directory:
 cd vehicle-damage-detection
 ```
 
-The project root directory should contain files similar to:
-
-```text
-vehicle-damage-detection/
-├── src/
-├── models/
-├── data/
-├── Dockerfile
-├── pyproject.toml
-├── uv.lock
-├── README.md
-└── .dockerignore
-```
 
 ---
 
@@ -139,6 +208,11 @@ source .venv/bin/activate
 .venv\Scripts\activate
 ```
 
+Run this to initiate all the packages
+```bash
+uv pip install -e .
+```
+
 You can then run the application locally using:
 
 ```bash
@@ -156,7 +230,7 @@ If you already have Docker installed and the project is configured correctly, th
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/hope205/Vehicle-Damage-Detection
 
 # Navigate to the project
 cd vehicle-damage-detection

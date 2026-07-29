@@ -7,11 +7,11 @@ class_names:
   - dent
   - scratch
 
-model_path: src/app/model/best.pt
+model_path: src/app/model/best_yolov8n.pt
 
 
 # Confidence threshold
-confidence_threshold: 0.25
+confidence_threshold: 0.405
 
 # IoU threshold used during NMS
 iou_threshold: 0.50
