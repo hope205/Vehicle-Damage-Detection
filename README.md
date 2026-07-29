@@ -244,48 +244,13 @@ http://localhost:8000/docs
 
 You can then interact with the vehicle damage detection API directly from the Swagger UI.
 
-
-
-### Model Selection
-
-
 ---
 
 ### Training Methodology
 
 The model training process was performed using the filtered CarDD dataset containing annotations for three vehicle damage categories: **dent**, **scratch** and **clean**
 
-The training pipeline consisted of the following steps:
-
-1. **Dataset Preparation**
-   - The original CarDD dataset was filtered to retain only `dent` and `scratch` annotations.
-   - Images without either of the target damage classes were excluded.
-   - The resulting dataset was organised into `train`, `val`, and `test` splits.
-   - A YOLO-compatible `data.yaml` configuration file was generated to define the dataset paths and class names.
-
-2. **Baseline Training**
-   - YOLO26n was selected as the initial baseline model.
-   - The baseline model was trained for **50 epochs**.
-   - A batch size of **16** was used.
-   - The input image size was set to **1024 × 1024 pixels**.
-   - The baseline achieved a **mAP@0.5 of 0.5504**.
-
-3. **Final Model Training**
-   - YOLOv8n was subsequently evaluated as an alternative lightweight object detection model.
-   - The model was trained for **50 epochs** with a batch size of **16**.
-   - The input image size was set to **640 × 640 pixels**.
-   - The YOLOv8n model achieved an overall **mAP@0.5 of 0.5800**.
-
-4. **Hardware**
-   - Model training was performed on Kaggle using **NVIDIA Tesla T4 GPUs**.
-
-5. **Model Selection**
-   - The trained models were evaluated based on their object detection performance.
-   - YOLOv8n achieved the highest mAP@0.58 of the evaluated configurations and was therefore selected as the final model for deployment.
-
-
-
-The API accepts common image formats including JPEG, PNG, JPG, and WebP.
+I built the model making use of a transfer learning approach. I performed tranafer learning a yolo26m model. The model training was performed on Kaggle using **NVIDIA Tesla T4 GPUs**. The data was trainned on for 50 epoch with image size of 640.
 
 
 ### Model Evaluation
@@ -366,10 +331,13 @@ The **Scratch** class proved to be the most challenging:
 
 Scratches are often thin, small, and visually similar to reflections or shadows, making them harder to localize accurately. This is reflected in the comparatively lower recall and localization metrics.
 
-## Summary
+**Example predictions**
 
-Overall, the model demonstrates **strong object detection performance**, achieving a **74.29% mAP@0.5** while maintaining high precision. It performs exceptionally well on the **Clean** class and shows reasonable performance on **Dent** and **Scratch** detection.
+![model predictions](evaluations/eval_20260729_183654/val_batch1_pred.jpg)
 
+![Predcition through the API](Images/dent.png)
+
+![Predcition through the API](Images/scratch.png)
 
 
 ### Error Analysis
@@ -402,7 +370,4 @@ These improvements are expected to enhance localization accuracy and increase de
 
 ### Business Impact & Deployment Strategy
 
-While the current false-positive rate means this iteration isn't ready for fully autonomous, unsupervised deployment, the model's extremely low False Negative rate (its inability to miss real damage) makes it immediately valuable as a **highly first-pass filter**. 
-
-In an automated insurance or rental inspection pipeline, this model can confidently flag potential issues for human review, ensuring no actual damage slips through the cracks. Once the false positive rate is calibrated via the negative sampling strategy outlined above, this system will be fully capable of dramatically reducing manual inspection labor, accelerating claim processing times, and standardizing damage assessments across the board.
 
