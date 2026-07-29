@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.13-slim 
 
 WORKDIR /app
 
@@ -16,8 +16,15 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 # Copy dependency files
 COPY pyproject.toml uv.lock ./
 
-# Install dependencies
-RUN uv sync --frozen --no-dev
+
+RUN uv pip install --system \
+    torch \
+    torchvision \
+    --index-url https://download.pytorch.org/whl/cpu
+
+
+# Install dependencies (skipping local project installation to avoid crashes)
+RUN uv sync --frozen --no-dev --no-install-project
 
 # Copy application source code
 COPY src ./src

@@ -2,16 +2,12 @@ import io
 import logging
 import time
 from pathlib import Path
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 from ultralytics import YOLO
 from src.core.config import settings
 from src.app.schema.schemas import BoundingBox, Detection, PredictionResponse
 
-
-
-logger = logging.getLogger(__name__)      
-
-
+logger = logging.getLogger(__name__)       
 
 class DamagePredictor:
     """Singleton wrapper around the YOLO car-damage-detection model."""
@@ -40,12 +36,30 @@ class DamagePredictor:
         self.model = YOLO(str(self.model_path))
         logger.info("Model loaded. Classes: %s", self.model.names)
 
-
     @property
     def is_loaded(self) -> bool:
         return self.model is not None
 
-
+    def _validate_and_open_image(self, image_bytes: bytes) -> Image.Image:
+        """
+        Validates actual file contents (magic bytes) to prevent spoofing,
+        and safely opens the image.
+        """
+        try:
+            img_io = io.BytesIO(image_bytes)
+            image = Image.open(img_io)
+            
+            # 4. Deep Validation
+            # .verify() checks file signatures and headers without loading the full raster data.
+            # If someone renamed a .txt file to .jpg, this will catch it.
+            image.verify() 
+            
+            # .verify() moves the file pointer. Reset it to 0 to actually read the image.
+            img_io.seek(0)
+            return Image.open(img_io).convert("RGB")
+            
+        except (UnidentifiedImageError, SyntaxError, ValueError, TypeError) as e:
+            raise ValueError("The uploaded file is corrupt, structurally invalid, or not a supported image format.") from e
 
 
     def predict(self, image_bytes: bytes, filename: str = "upload") -> PredictionResponse:
@@ -53,13 +67,13 @@ class DamagePredictor:
             raise RuntimeError("Model is not loaded. Call load() first.")
 
         start = time.perf_counter()
-        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        
+        # Use the secure loading method
+        image = self._validate_and_open_image(image_bytes)
         width, height = image.size
 
         results = self.model.predict(
             source=image,
-            conf=settings.model.confidence_threshold,
-            iou=settings.model.iou_threshold,
             verbose=False,
         )
         result = results[0]
@@ -87,20 +101,19 @@ class DamagePredictor:
             detections=detections,
             inference_time_ms=round(elapsed_ms, 2),
         )
-
-
-
     
     def predict_annotated(self, image_bytes: bytes) -> bytes:
         """Return JPEG bytes of the image with bounding boxes drawn on it."""
         if self.model is None:
             raise RuntimeError("Model is not loaded. Call load() first.")
 
-        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        # Use the secure loading method
+        image = self._validate_and_open_image(image_bytes)
+        
         results = self.model.predict(
             source=image,
-            conf=settings.model.confidence_threshold,
-            iou=settings.model.iou_threshold,
+            # conf=settings.model.confidence_threshold,
+            # iou=settings.model.iou_threshold,
             verbose=False,
         )
         annotated_array = results[0].plot()  # returns a BGR numpy array

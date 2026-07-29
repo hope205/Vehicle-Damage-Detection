@@ -1,5 +1,5 @@
 # YOLO segmentation model checkpoint
-model_name: yolo26n.pt
+model_name: yolo26m.pt
 
 num_classes: 2
 
@@ -7,14 +7,8 @@ class_names:
   - dent
   - scratch
 
-model_path: src/app/model/best_yolov8n.pt
+model_path: src/app/model/new_carrd.pt
 
-
-# Confidence threshold
-confidence_threshold: 0.405
-
-# IoU threshold used during NMS
-iou_threshold: 0.50
 
 # Image size used during inference
 image_size: 640

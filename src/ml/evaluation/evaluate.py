@@ -1,16 +1,27 @@
+import os
 from pathlib import Path
 from ultralytics import YOLO
-from core.config import settings
-from ml.evaluation.metrics import extract_all_metrics
+from src.core.config import settings
+from src.ml.evaluation.metrics import extract_all_metrics
+from datetime import datetime
+from pathlib import Path
+import json
 
 
-MODEL_PATH = Path("src/app/model/best_yolo8n.pt")
-DATA_PATH = Path("data_carrd/filtered/data.yaml")
+
+# Generate a timestamp like '20260729_144500'
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+EVALUATION_NAME = f"eval_{timestamp}"
+
+ROOT_DIR = Path(__file__).resolve().parents[3]
+EVAL_DIR = ROOT_DIR / "evaluations"
+EVAL_DIR.mkdir(parents=True, exist_ok=True)
+
+
+MODEL_PATH = settings.model.model_path  # Path to the trained YOLO model weights    
+DATA_PATH = Path(settings.data.filtered_data_path)
 CLASS_NAMES = settings.data.classes
 
-
-# EVALUATION_DIR = Path("evaluations")
-EVALUATION_NAME = "vehicle_damage_evaluation"
 
 
 
@@ -34,10 +45,10 @@ def evaluate_model():
         batch=settings.training.batch_size,
         device=settings.training.device,
         plots=True,
-        project=str(EVALUATION_NAME),
-        name=EVALUATION_NAME,
+        project=str(EVAL_DIR),
+        name=str(EVALUATION_NAME),
         exist_ok=True,
-        
+    
     )
 
     metrics = extract_all_metrics(results, CLASS_NAMES)
@@ -77,11 +88,25 @@ def evaluate_model():
         print(f"  mAP50:         {box['map50']:.4f}")
         print(f"  mAP50-95:      {box['map50_95']:.4f}")
 
-  
-  
+
+    # SAVE METRICS TO JSON
+
+    # Construct the path to the current specific evaluation run
+    current_run_dir = EVAL_DIR / EVALUATION_NAME
+    
+    # Ensure the directory exists (YOLO creates it, but this is a safe fallback)
+    current_run_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Define the target JSON file path
+    metrics_file_path = current_run_dir / "metrics.json"
+    
+    # Save the dictionary as a formatted JSON file
+    with open(metrics_file_path, "w") as f:
+        json.dump(metrics, f, indent=4)
+        
+    print(f"\n[INFO] Metrics successfully saved to: {metrics_file_path}")
    
 
-    evaluation_path = EVALUATION_NAME
 
     print("\n" + "=" * 60)
     print("EVALUATION COMPLETED SUCCESSFULLY")

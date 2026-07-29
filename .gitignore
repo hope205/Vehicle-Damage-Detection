@@ -10,10 +10,9 @@ wheels/
 .venv
 .env
 
+runs/
+
 report_dir/
-evalutions/
 data/
 data_carrd/
-
-data/
 

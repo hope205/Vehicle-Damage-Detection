@@ -1,12 +1,13 @@
 raw_data_dir: data_carrd/raw
-
-
 image_dir: image
 
 filtered_data_dir: data_carrd/filtered
+
+filtered_data_path: data_carrd/filtered/data.yaml
 
 report_dir: reports_dir
 
 classes:
   0: dent
   1: scratch
+  2: clean

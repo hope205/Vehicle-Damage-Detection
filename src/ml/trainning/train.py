@@ -2,7 +2,7 @@ import logging
 import json
 from collections import Counter
 from ultralytics import YOLO
-from core.config import settings
+from src.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -14,8 +14,7 @@ def train_model():
 
     model.train(
         data=str(
-            settings.data.processed_data_dir
-            / "data.yaml"
+            settings.data.filtered_data_path
         ),
         epochs=settings.training.epochs,
         batch=settings.training.batch_size,

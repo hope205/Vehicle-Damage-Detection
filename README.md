@@ -27,30 +27,24 @@ The resulting filtered dataset contains **6,138 annotated damage instances** acr
 
 ### Class Distribution
 
-After filtering the dataset to include only **dents** and **scratches**, the class distribution was:
+The dataset contains **4,000 images** divided into training, validation, and test sets. The original CarDD annotations were processed to retain **dent** and **scratch** bounding boxes. Images containing only other types of damage, such as cracks, broken lamps, shattered glass, or flat tyres, were retained and labelled as **clean** for this task.
 
-| Class | Instances | Percentage |
-|---|---:|---:|
-| Dent | 2,543 | 41.43% |
-| Scratch | 3,595 | 58.57% |
-| **Total** | **6,138** | **100%** |
+| Split | Images | Images with Dent | Images with Scratch | Images Labelled Clean |
+|---|---:|---:|---:|---:|
+| Train | 2,816 | 1,242 | 1,507 | 715 |
+| Validation | 810 | 352 | 431 | 207 |
+| Test | 374 | 157 | 183 | 104 |
+| **Total** | **4,000** | **1,751** | **2,121** | **1,026** |
 
-The filtered dataset contains a higher number of **scratch** annotations than **dent** annotations. Scratches account for **58.57%** of all annotated damage instances, while dents account for **41.43%**.
+The model uses three target classes:
 
-Overall, the class distribution is reasonably balanced, although scratches are more represented than dents.
+- **Class 0 — Dent:** Images containing one or more dent annotations.
+- **Class 1 — Scratch:** Images containing one or more scratch annotations.
+- **Class 2 — Clean:** Images with no retained dent or scratch annotations. These images may contain other types of vehicle damage that are outside the scope of this model.
 
-### Number of Filtered Images
+> **Note:** An image can contain multiple damage types, so the class counts represent the number of images containing each class and therefore do not necessarily sum to the total number of images.
 
-After filtering the dataset, a total of **2,974 images** containing at least one dent or scratch annotation were retained across the training, validation, and test sets.
 
-| Dataset Split | Number of Images |
-|---|---:|
-| Train | 2,101 |
-| Validation | 603 |
-| Test | 270 |
-| **Total** | **2,974** |
-
-The filtered dataset was subsequently used to train and evaluate the YOLO-based vehicle damage detection model.
 
 ## API
 
@@ -263,6 +257,8 @@ Two model configurations were evaluated during the initial experimentation phase
 | YOLO26n | 1024 × 1024 | 16 | 50 | 0.5504 |
 | YOLOv8n | 640 × 640 | 16 | 50 | **0.5800** |
 
+
+
 The **YOLO26n** model was initially used as the baseline and achieved a **mAP@0.5 of 0.5504** using an image size of **1024 × 1024**, a batch size of **16**, and **50 training epochs**.
 
 The **YOLOv8n** model achieved a higher overall **mAP@0.5 of 0.5800** while using a smaller input image size of **640 × 640**, with the same batch size of **16** and **50 training epochs**.
@@ -304,7 +300,7 @@ The training pipeline consisted of the following steps:
    - The YOLOv8n model achieved an overall **mAP@0.5 of 0.5800**.
 
 4. **Hardware**
-   - Model training was performed on Kaggle using **2 × NVIDIA Tesla T4 GPUs**.
+   - Model training was performed on Kaggle using **NVIDIA Tesla T4 GPUs**.
 
 5. **Model Selection**
    - The trained models were evaluated based on their object detection performance.

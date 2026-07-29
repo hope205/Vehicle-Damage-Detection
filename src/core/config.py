@@ -15,13 +15,12 @@ class DataConfig(BaseModel):
     filtered_data_dir: Path
     image_dir: str
     classes: dict[int, str]
+    filtered_data_path: Path
 
 
 class ModelConfig(BaseModel):
     model_name: str
     pretrained: bool = True
-    confidence_threshold: float
-    iou_threshold: float 
     image_size: int
     model_path: Path 
     allowed_content_types: set[str] = {"image/jpeg", "image/png", "image/jpg", "image/webp"}
