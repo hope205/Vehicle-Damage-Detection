@@ -1,5 +1,4 @@
-# 1. Use 3.12-slim for guaranteed ML library compatibility
-FROM python:3.12-slim 
+FROM python:3-slim
 
 WORKDIR /app
 

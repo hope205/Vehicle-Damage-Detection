@@ -342,32 +342,61 @@ Scratches are often thin, small, and visually similar to reflections or shadows,
 
 ### Error Analysis
 
-A deep dive into the confusion matrices reveals a very clear story about what the model has learned, and exactly where it needs refinement. 
-
-**Feature Recognition**
-The model is highly capable of identifying actual damage. When presented with a real defect, it correctly flags scratches **83% of the time** and dents **77% of the time**. It is exceptionally rare for the model to completely miss actual damage (only missing 3-4% of the time). This proves that the foundational feature extraction is robust.
-
-![confusion_matrix_normalized](runs/detect/evaluations/vehicle_damage_evaluation/confusion_matrix_normalized.png)
+![Confusion matrix](evaluations/eval_20260729_183654/confusion_matrix.png)
 
 
-**Area for Improvement: Hyper-Sensitivity (False Positives)**
-While the model performs well at finding damage,it is highly sensitive and is currently confusing environmental artifacts like sharp reflections, glare, dirt, and natural vehicle panel gaps for scratches and dents. Looking at the raw matrix counts, the model frequently hallucinates bounding boxes on the background (clean parts of the car). 
-
-![confusion_matrix](runs/detect/evaluations/vehicle_damage_evaluation/confusion_matrix.png)
-
-**Action Plan :**
-
-The comparatively lower recall and mAP@0.5:0.95 for damage classes suggest that future improvements could focus on:
-
-- Increasing the diversity and quantity of dent and scratch images.
-- Applying stronger data augmentation techniques.
-- Training for additional epochs with hyperparameter tuning.
-- Experimenting with larger YOLO model variants.
-- Improving annotation quality for small or ambiguous damage regions.
-
-These improvements are expected to enhance localization accuracy and increase detection performance for subtle vehicle damage.
 
 
-### Business Impact & Deployment Strategy
 
+## Business Applications
+
+This vehicle damage detection model can be integrated into several real-world workflows to automate inspections and reduce manual effort.
+
+### Car Rental and Fleet Management
+
+Rental companies and fleet operators can use the model to automatically inspect vehicles during check-in and check-out. By detecting dents and scratches from uploaded images, the system can:
+
+- Identify new damage before and after rentals.
+- Reduce disputes between customers and rental providers.
+- Generate consistent inspection reports.
+- Minimize manual inspection time.
+- Speed up vehicle turnaround and availability.
+
+### Auto Insurance Claims Processing
+
+Insurance providers can leverage the model to automate the initial assessment of vehicle damage submitted by policyholders. The system can:
+
+- Pre-screen uploaded claim images.
+- Detect and classify visible vehicle damage.
+- Automatically populate claim information with detected damage types.
+- Prioritize claims requiring immediate attention.
+- Reduce the workload of claims adjusters by automating the first stage of damage assessment.
+
+### Vehicle Service and Repair Centres
+
+Automotive repair workshops can integrate the model into their inspection process to provide faster and more consistent damage assessments. This enables technicians to:
+
+- Quickly identify visible damage before repairs begin.
+- Generate preliminary repair reports.
+- Improve consistency across inspections.
+- Reduce the time spent on manual visual assessments.
+
+### Used Vehicle Inspection
+
+Dealerships and vehicle inspection companies can use the model during vehicle valuation and certification processes to automatically identify exterior damage before resale, helping ensure transparent and standardized vehicle condition reports.
+
+### Fleet Maintenance
+
+Organizations operating large fleets, such as logistics companies and ride-hailing services, can continuously monitor vehicle condition by periodically analysing images of their vehicles. Early detection of dents and scratches allows maintenance teams to schedule repairs before minor damage worsens, reducing long-term maintenance costs.
+
+## Business Value
+
+Automating vehicle damage detection provides several operational and financial benefits:
+
+- **Reduced inspection time** through automated damage detection.
+- **Lower operational costs** by minimizing manual inspection effort.
+- **Consistent assessments** that reduce human subjectivity.
+- **Faster insurance claim processing** through automated damage classification.
+- **Improved customer experience** with quicker inspections and fewer disputes.
+- **Scalable deployment** through the FastAPI inference service, allowing integration with mobile applications, web platforms, and enterprise fleet management systems.
 
