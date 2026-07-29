@@ -98,6 +98,126 @@ The filtered dataset contains a higher number of **scratch** annotations than **
 Overall, the class distribution is reasonably balanced, although scratches are more represented than dents. This filtered dataset was subsequently used to train the YOLO-based vehicle damage detection model.
 
 
+### Setup
+
+Follow the steps below to set up and run the Vehicle Damage Detection System locally using Docker.
+
+### Prerequisites
+
+Before getting started, make sure the following tools are installed on your system:
+
+- [Git](https://git-scm.com/)
+- [Docker](https://www.docker.com/)
+- [uv](https://docs.astral.sh/uv/) *(optional if you only want to run the application using Docker)*
+
+You can verify that the required tools are installed by running:
+
+```bash
+git --version
+docker --version
+```
+
+If you plan to run the project locally without Docker, you should also verify that `uv` is installed:
+
+```bash
+uv --version
+```
+
+---
+
+### Step 1: Clone the Repository
+
+Clone the repository from GitHub:
+
+```bash
+git clone <repository-url>
+```
+
+Navigate into the project directory:
+
+```bash
+cd vehicle-damage-detection
+```
+
+The project root directory should contain files similar to:
+
+```text
+vehicle-damage-detection/
+├── src/
+├── models/
+├── data/
+├── Dockerfile
+├── pyproject.toml
+├── uv.lock
+├── README.md
+└── .dockerignore
+```
+
+---
+
+### Step 2: Set Up the Python Environment (Optional)
+
+If you want to run the application directly on your local machine before using Docker, the project uses `uv` for Python dependency management.
+
+Synchronise the project dependencies using:
+
+```bash
+uv sync
+```
+
+This will create a virtual environment and install the dependencies defined in `pyproject.toml` using the versions locked in `uv.lock`.
+
+Activate the virtual environment:
+
+#### Linux / macOS
+
+```bash
+source .venv/bin/activate
+```
+
+#### Windows
+
+```powershell
+.venv\Scripts\activate
+```
+
+You can then run the application locally using:
+
+```bash
+uv run uvicorn src.app.main:app --host 0.0.0.0 --port 8000
+```
+
+However, running the application locally is optional. The recommended deployment method for this project is through Docker.
+
+
+---
+
+### Quick Start with Docker
+
+If you already have Docker installed and the project is configured correctly, the complete setup can be reduced to:
+
+```bash
+# Clone the repository
+git clone <repository-url>
+
+# Navigate to the project
+cd vehicle-damage-detection
+
+# Build the Docker image
+docker build -t vehicle-damage .
+
+# Run the container
+docker run -p 8000:8000 vehicle-damage:latest
+```
+
+After starting the container, open the FastAPI documentation in your browser:
+
+```text
+http://localhost:8000/docs
+```
+
+You can then interact with the vehicle damage detection API directly from the Swagger UI.
+
 
 
 ## 7. Preprocessing
@@ -110,28 +230,8 @@ Overall, the class distribution is reasonably balanced, although scratches are m
 ### Candidate Models
 ### Final Model
 
-## 9. Training Methodology
 
 
-
-## 13. API
-
-## 14. Project Structure
-
-## 15. Setup
-
-## 16. Running Inference
-
-base model of yolov8n image size of 640
-
-
-## 17. Docker
-
-Navigate to the root directy of the application
-
-docker build -t vehicle-damage .
-
-docker run -p 8000:8000 vehicle-damage:latest
 
 ## 📊 Evaluation & Metrics
 
