@@ -316,7 +316,7 @@ The API accepts common image formats including JPEG, PNG, JPG, and WebP.
 
 
 
-## 📊 Evaluation & Metrics
+### Evaluation & Metrics
 
 The primary goal of this initial training phase was to determine if the model could successfully identy scratchs and dents features of vehicle damage. The results strongly indicate that it has. 
 
@@ -332,30 +332,30 @@ To optimize the model's performance in a real-world setting, I analyzed the F1-C
 
 
 
-## 🔍 Error Analysis: What the Data is Telling Us
+### Error Analysis: What the Data is Telling Us
 
 A deep dive into the confusion matrices reveals a very clear story about what the model has learned, and exactly where it needs refinement. 
 
-**The Good: Excellent Feature Recognition**
+**Feature Recognition**
 The model is highly capable of identifying actual damage. When presented with a real defect, it correctly flags scratches **83% of the time** and dents **77% of the time**. It is exceptionally rare for the model to completely miss actual damage (only missing 3-4% of the time). This proves that the foundational feature extraction is robust.
 
 ![confusion_matrix_normalized](runs/detect/evaluations/vehicle_damage_evaluation/confusion_matrix_normalized.png)
 
 
 **Area for Improvement: Hyper-Sensitivity (False Positives)**
-While the model performs well at finding damage,it is highly sensitive and is currently confusing environmental artifacts—like sharp reflections, glare, dirt, and natural vehicle panel gaps—for scratches and dents. Looking at the raw matrix counts, the model frequently hallucinates bounding boxes on the background (clean parts of the car). 
+While the model performs well at finding damage,it is highly sensitive and is currently confusing environmental artifacts like sharp reflections, glare, dirt, and natural vehicle panel gaps for scratches and dents. Looking at the raw matrix counts, the model frequently hallucinates bounding boxes on the background (clean parts of the car). 
 
 In short: The model knows exactly what a scratch looks like, but it hasn't yet learned what a *healthy* car looks like. 
 
 ![confusion_matrix](runs/detect/evaluations/vehicle_damage_evaluation/confusion_matrix.png)
 
-**Action Plan for Version 2.0:**
+**Action Plan :**
 To easily correct this hyper-sensitivity, the next training iteration will include:
-1. Injecting a large volume of "background-only" images (perfectly intact vehicles under various lighting conditions) with empty annotations to force the model to learn what *not* to detect.
-2. Isolating the specific reflections and panel gaps that caused the false positives, labeling them as background, and feeding them back into the model.Instead of two classes, we will be having three
+1. Injecting a large volume of "background-only" images (perfectly intact vehicles under various lighting conditions) with empty annotations to force the model to learn what not to detect.
+2. Isolating the specific reflections and panel gaps that caused the false positives, labeling them as background, and feeding them back into the model. Instead of two classes, we will be having three classes
 3. Applying more random glare and shadow effects during training to make the model blind to lighting artifacts. 
 
-## 💼 Business Impact & Deployment Strategy
+### Business Impact & Deployment Strategy
 
 While the current false-positive rate means this iteration isn't ready for fully autonomous, unsupervised deployment, the model's extremely low False Negative rate (its inability to miss real damage) makes it immediately valuable as a **highly first-pass filter**. 
 
