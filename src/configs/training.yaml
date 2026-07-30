@@ -12,7 +12,7 @@ seed: 42
 optimizer: auto
 
 # Hardware
-device: "0"
+device: "cpu"
 
 # Classes
 num_classes: 3

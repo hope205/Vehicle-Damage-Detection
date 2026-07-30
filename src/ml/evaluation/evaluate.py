@@ -48,6 +48,9 @@ def evaluate_model():
         project=str(EVAL_DIR),
         name=str(EVALUATION_NAME),
         exist_ok=True,
+        conf=settings.model.confidence_threshold,
+        iou=settings.model.iou_threshold,
+        # iou=0.5,  # 
     
     )
 

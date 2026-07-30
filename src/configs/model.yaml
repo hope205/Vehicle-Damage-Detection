@@ -19,3 +19,6 @@ allowed_content_types:
   - image/png
   - image/jpg
   - image/webp
+
+confidence_threshold: 0.4  # Confidence threshold for predictions
+iou_threshold: 0.7  # Intersection over Union threshold for predictions

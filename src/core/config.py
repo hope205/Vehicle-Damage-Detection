@@ -26,6 +26,8 @@ class ModelConfig(BaseModel):
     allowed_content_types: set[str] = {"image/jpeg", "image/png", "image/jpg", "image/webp"}
     num_classes: int
     max_image_size_mb: int = 5  # Maximum allowed image size in MB
+    confidence_threshold: float  # Confidence threshold for predictions
+    iou_threshold: float  # Intersection over Union threshold for predictions
 
 
 

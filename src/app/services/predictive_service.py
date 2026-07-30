@@ -75,6 +75,9 @@ class DamagePredictor:
         results = self.model.predict(
             source=image,
             verbose=False,
+            conf=settings.model.confidence_threshold,
+            iou=settings.model.iou_threshold,
+
         )
         result = results[0]
 
@@ -112,8 +115,8 @@ class DamagePredictor:
         
         results = self.model.predict(
             source=image,
-            # conf=settings.model.confidence_threshold,
-            # iou=settings.model.iou_threshold,
+            conf=settings.model.confidence_threshold,
+            iou=settings.model.iou_threshold,
             verbose=False,
         )
         annotated_array = results[0].plot()  # returns a BGR numpy array
