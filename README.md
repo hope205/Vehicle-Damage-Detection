@@ -27,22 +27,24 @@ The resulting filtered dataset contains **6,138 annotated damage instances** acr
 
 ### Class Distribution
 
-The dataset contains **4,000 images** divided into training, validation, and test sets. The original CarDD annotations were processed to retain **dent** and **scratch** bounding boxes. Images containing only other types of damage, such as cracks, broken lamps, shattered glass, or flat tyres, were retained and labelled as **clean** for this task.
+The dataset contains **4,000 images** divided into training, validation, and test sets. The original CarDD annotations were processed to retain only **dent** and **scratch** bounding boxes. Images containing only other damage categories, such as cracks, broken lamps, shattered glass, or flat tyres, were converted into the **clean** class for this task.
 
-| Split | Images | Images with Dent | Images with Scratch | Images Labelled Clean |
-|---|---:|---:|---:|---:|
-| Train | 2,816 | 1,242 | 1,507 | 715 |
-| Validation | 810 | 352 | 431 | 207 |
-| Test | 374 | 157 | 183 | 104 |
-| **Total** | **4,000** | **1,751** | **2,121** | **1,026** |
+The final dataset contains three target classes:
 
-The model uses three target classes:
+| Split | Images | Images with Dent | Images with Scratch | Clean Images | Dent Instances | Scratch Instances | Clean Instances |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Train | 2,816 | 1,242 | 1,507 | 715 | 1,806 | 2,560 | 715 |
+| Validation | 810 | 352 | 431 | 207 | 501 | 728 | 207 |
+| Test | 374 | 157 | 183 | 104 | 236 | 307 | 104 |
+| **Total** | **4,000** | **1,751** | **2,121** | **1,026** | **2,543** | **3,595** | **1,026** |
 
-- **Class 0 — Dent:** Images containing one or more dent annotations.
-- **Class 1 — Scratch:** Images containing one or more scratch annotations.
-- **Class 2 — Clean:** Images with no retained dent or scratch annotations. These images may contain other types of vehicle damage that are outside the scope of this model.
+### Target Classes
 
-> **Note:** An image can contain multiple damage types, so the class counts represent the number of images containing each class and therefore do not necessarily sum to the total number of images.
+- **Class 0 — Dent:** Vehicle images containing one or more dent bounding box annotations.
+- **Class 1 — Scratch:** Vehicle images containing one or more scratch bounding box annotations.
+- **Class 2 — Clean:** Images with no retained dent or scratch annotations. These images may still contain other damage types that are outside the scope of this model.
+
+> **Note:** Image counts represent the number of images containing each class, while instance counts represent the total number of annotated objects (bounding boxes) for each class. Since a single image can contain multiple dents or scratches, instance counts are typically higher than image counts and classes do not necessarily sum to the total number of images.
 
 
 
