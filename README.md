@@ -252,87 +252,40 @@ The model training process was performed using the filtered CarDD dataset contai
 I built the model making use of a transfer learning approach. I performed tranafer learning a yolo26m model. The model training was performed on Kaggle using **NVIDIA Tesla T4 GPUs**. The data was trainned on for 50 epoch with image size of 640.
 
 
-### Model Evaluation
+## Model Evaluation
 
-The trained YOLO object detection model was evaluated on a held-out validation dataset using standard object detection metrics. The evaluation measures how accurately the model detects and localizes different categories of vehicle damage.
+The YOLO model was evaluated on the held-out test set using standard object detection metrics.
 
 ### Overall Performance
 
 | Metric | Score |
 |--------|------:|
-| Precision | **79.87%** |
-| Recall | **67.68%** |
-| F1-Score | **73.27%** |
-| mAP@0.5 | **74.29%** |
-| mAP@0.5:0.95 | **56.63%** |
+| Precision | **80.74%** |
+| Recall | **66.72%** |
+| F1-Score | **73.06%** |
+| mAP@0.5 | **61.52%** |
+| mAP@0.5:0.95 | **48.68%** |
 
 ### Per-Class Performance
 
 | Class | Precision | Recall | F1-Score | mAP@0.5 | mAP@0.5:0.95 |
 |------|----------:|-------:|---------:|---------:|-------------:|
-| Dent | 76.74% | 58.90% | 66.65% | 63.73% | 37.04% |
-| Scratch | 69.44% | 54.72% | 61.21% | 61.48% | 35.48% |
-| Clean | 93.44% | 89.42% | 91.39% | 97.67% | 97.35% |
+| Dent | **77.71%** | **57.63%** | **66.18%** | **49.89%** | **30.11%** |
+| Scratch | **70.64%** | **54.07%** | **61.25%** | **46.56%** | **27.80%** |
+| Clean | **93.88%** | **88.46%** | **91.09%** | **88.13%** | **88.13%** |
 
-## Metric Interpretation
+### Summary
 
-### Precision (79.87%)
-
-Precision measures the proportion of predicted damage detections that are actually correct. A precision of **79.87%** indicates that when the model predicts a damage region, it is correct nearly **4 out of every 5 times**, resulting in relatively few false positive detections.
-
-### Recall (67.68%)
-
-Recall measures the model's ability to detect all actual damage instances. A recall of **67.68%** means the model successfully identifies approximately **two-thirds of all damages**, while some damage regions remain undetected.
-
-### F1-Score (73.27%)
-
-The F1-score is the harmonic mean of precision and recall, providing a balanced measure of detection performance. The model achieves an overall **F1-score of 73.27%**, indicating a good balance between minimizing false positives and detecting true damage instances.
-
-### mAP@0.5 (74.29%)
-
-Mean Average Precision at an IoU threshold of 0.5 evaluates both classification and localization performance. A score of **74.29%** indicates that the model performs well at identifying and localizing vehicle damage when a moderate overlap between predicted and ground-truth bounding boxes is required.
-
-### mAP@0.5:0.95 (56.63%)
-
-This metric averages performance across multiple IoU thresholds (0.50 to 0.95), making it a much stricter evaluation of localization accuracy based of the fact that he area of dent or scratch may be wide or small and getting the exact boundary box is difficult because of its relativity
+- The model achieves an overall **F1-score of 73.06%**, balancing precision (**80.74%**) and recall (**66.72%**) for vehicle damage detection.
+- The **Clean** class performs best across all metrics, indicating the model reliably distinguishes undamaged vehicles from damaged ones.
+- **Dent** detection is more accurate than **Scratch** detection, while scratches remain the most challenging class due to their thin, irregular appearance and lower contrast.
+- The lower **mAP@0.5:0.95** compared to **mAP@0.5** reflects the difficulty of precisely localizing dents and scratches, whose boundaries are often subjective and vary significantly in size and shape.
 
 
-## Class-wise Analysis
-
-### Clean
-
-The **Clean** class achieved the strongest performance across all metrics:
-
-- Precision: **93.44%**
-- Recall: **89.42%**
-- F1-Score: **91.39%**
-- mAP@0.5: **97.67%**
-
-These results indicate that the model can reliably distinguish undamaged vehicles from damaged ones with very high confidence and localization accuracy.
-
-### Dent
-
-The **Dent** class achieved moderate performance:
-
-- Precision: **76.74%**
-- Recall: **58.90%**
-- F1-Score: **66.65%**
-
-The model is generally accurate when predicting dents but misses a noticeable number of dent instances. This may be due to varying dent sizes, lighting conditions, or subtle surface deformations that are difficult to detect.
-
-### Scratch
-
-The **Scratch** class proved to be the most challenging:
-
-- Precision: **69.44%**
-- Recall: **54.72%**
-- F1-Score: **61.21%**
-
-Scratches are often thin, small, and visually similar to reflections or shadows, making them harder to localize accurately. This is reflected in the comparatively lower recall and localization metrics.
 
 **Example predictions**
 
-![model predictions](evaluations/eval_20260729_183654/val_batch1_pred.jpg)
+![model predictions](evaluations/eval_20260730_154048/val_batch1_pred.jpg)
 
 ![Predcition through the API](Images/dent.png)
 
@@ -341,40 +294,45 @@ Scratches are often thin, small, and visually similar to reflections or shadows,
 
 ## Error Analysis
 
-![Confusion matrix](evaluations/eval_20260729_183654/confusion_matrix.png)
+![Confusion matrix](evaluations/eval_20260730_154048/confusion_matrix.png)
 
 
 ### Key Observations
 
-- **Strong performance on the Clean class**
-  - The model correctly classifies most clean vehicles (**101 true positives**) with very few being incorrectly predicted as damaged.
-  - This aligns with the high evaluation metrics obtained for the **Clean** class (Precision: **93.44%**, Recall: **89.42%**).
+- **Strong performance on clean vehicle detection**
+  - The model performs well on the **Clean** class, correctly identifying **92 samples** with limited confusion into other categories.
+  - This is reflected in the strong **precision (93.9%)** and **recall (88.5%)** scores.
 
-- **Confusion between Dent and Scratch**
-  - The model occasionally predicts **scratches as dents (57 cases)** and **dents as scratches (35 cases)**.
-  - This suggests that both damage types share similar visual characteristics, especially when scratches are wide or dents contain visible paint damage.
+- **Some overlap between dent and scratch detection**
+  - The model occasionally confuses **dents and scratches**, with **4 scratches predicted as dents** and **6 dents predicted as scratches**.
+  - This is expected since both damage types can share similar visual patterns, especially around areas with paint marks or shallow surface damage.
 
-- **Missed Damage Instances**
-  - Some true dent and scratch instances are classified as **background**, indicating that the model fails to detect certain damage regions altogether.
-  - This contributes to the lower recall values observed for both damage classes.
+- **Background classification remains challenging**
+  - The model struggles to identify the **Background** class, correctly detecting **0 out of 92 samples**.
+  - Most background images are classified as **scratch (58)** or **dent (28)**, suggesting the model is picking up visual patterns that resemble vehicle damage.
 
-- **False Positive Damage Predictions**
-  - A noticeable number of **background regions are predicted as dents (3,908)** or **scratches (4,923)**.
-  - These predictions are typically caused by reflections, shadows, body panel edges, dirt, or image textures that visually resemble vehicle damage.
+- **Background false positives need improvement**
+  - The model predicts **background** for 231 samples, but these predictions are incorrect.
+  - These cases are mainly actual **scratch (132)**, **dent (87)**, and **clean (12)** samples, indicating that the background class needs better representation and separation during training.
+
 
 ## Potential Improvements
 
-Several strategies could further improve the model's performance:
+Several improvements could help address the current model limitations:
 
-- **Increase training data** for dent and scratch classes, particularly images containing subtle and small-scale damage.
-- **Apply stronger data augmentation** (lighting changes, blur, shadows, reflections, and different viewing angles) to improve robustness in real-world conditions.
-- **Address class imbalance** by collecting additional samples for underrepresented damage classes or applying class-aware sampling techniques.
-- **Experiment with larger YOLO variants** or fine-tune hyperparameters to improve localization performance.
-- **Optimize the confidence threshold** during inference to reduce false positive detections while maintaining acceptable recall.
+- **Improve background class learning**
+  - Add more diverse background-only images and hard negative samples to help the model distinguish non-damage regions from actual vehicle damage patterns.
 
+- **Reduce dent and scratch confusion**
+  - Include more examples of subtle dents and scratches, especially cases with similar visual characteristics, to improve feature separation between both classes.
 
-Overall, the confusion matrix shows that the model is effective at distinguishing **clean vehicles** from **damaged vehicles**, but the primary challenge remains accurately differentiating between **dents** and **scratches** and reducing false detections on background regions. These improvements are expected to increase recall, improve localization accuracy, and reduce misclassifications in real-world deployment.
+- **Use stronger augmentation strategies**
+  - Apply realistic transformations such as lighting variation, reflections, blur, and different camera angles to improve robustness in real-world scenarios.
 
+- **Fine-tune model architecture and training settings**
+  - Experiment with larger YOLO variants, confidence thresholds, and hyperparameter tuning to improve detection accuracy and reduce false positives.
+
+Overall, the model demonstrates strong performance in detecting clean and damaged vehicles. The main areas for improvement are better background discrimination, reducing false detections, and improving separation between visually similar damage types.
 
 
 ## Business Applications
