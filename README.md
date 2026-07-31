@@ -22,7 +22,7 @@ The original dataset contains images of vehicles with multiple categories of dam
 
 During preprocessing, all annotations belonging to other damage categories were removed. Images that contained at least one **dent** or **scratch** annotation were retained, while images without either target class were excluded.
 
-The resulting filtered dataset contains **6,138 annotated damage instances** across the two target classes.
+
 
 
 ### Class Distribution
