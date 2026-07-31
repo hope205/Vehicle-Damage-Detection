@@ -23,9 +23,14 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+
+
 # 1. CORS is Locked Down
 # Retrieve allowed origins from settings, or default to specific safe domains.
 ALLOWED_ORIGINS = getattr(settings, "allowed_origins", ["http://localhost:3000", "http://127.0.0.1:3000"])
+
+
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -34,6 +39,8 @@ app.add_middleware(
     allow_methods=["GET", "POST"], # Restrict methods to only what is needed
     allow_headers=["Content-Type", "Authorization"], # Restrict headers
 )
+
+
 
 async def _read_and_validate_file(file: UploadFile) -> bytes:
     """

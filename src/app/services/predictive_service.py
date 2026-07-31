@@ -119,6 +119,7 @@ class DamagePredictor:
             iou=settings.model.iou_threshold,
             verbose=False,
         )
+
         annotated_array = results[0].plot()  # returns a BGR numpy array
         annotated_image = Image.fromarray(annotated_array[..., ::-1])  # BGR -> RGB
 
